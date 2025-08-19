@@ -2,26 +2,253 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="/play.svg"
-  />
+  <meta charset="utf-8" />
+  <title>Neighbourhood Sites – vis-network</title>
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1"
   />
-  <title>Vite App</title>
+  <!-- vis-network (modern vis.js for networks) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/vis-network@9.1.6/styles/vis-network.min.css"
+  >
+  <script src="https://unpkg.com/vis-network@9.1.6/standalone/umd/vis-network.min.js"></script>
+  <!-- Papa Parse for robust CSV parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      margin: 0;
+    }
+
+    header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .controls {
+      display: flex;
+      gap: .75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    label {
+      font-size: .9rem;
+    }
+
+    #network {
+      height: 80vh;
+    }
+
+    .hint {
+      font-size: .85rem;
+      opacity: .8;
+    }
+
+    .spacer {
+      flex: 1 1 auto;
+    }
+  </style>
 </head>
 
 <body>
-  <div id="app"> </div>
+  <header>
+    <h1>Neighbourhood Sites — Distance-Weighted Network</h1>
+    <div class="spacer"></div>
+    <div class="controls">
+      <label>Group by:
+        <select id="groupBy">
+          <option>Partner Org</option>
+          <option>Artist Educator</option>
+          <option>EarlyON</option>
+        </select>
+      </label>
+      <label>Show edge labels
+        <input
+          type="checkbox"
+          id="edgeLabels"
+        />
+      </label>
+      <span class="hint">Tip: hover nodes/edges for details. Drag to explore.</span>
+    </div>
+  </header>
 
+  <div id="network"></div>
+
+  <!-- Your CSV lives here so we can paste/edit it easily -->
   <script
-    type="module"
-    src="/src/main.js"
-  ></script>
+    type="text/csv"
+    id="csvdata"
+  >
+Artist Educator,EarlyON,Site,Partner Org,Address,Title,Photo link,GPS
+Ace Martin,FALSE,Kiwanis Club,BGC Hamilton Halton,"45 Ellis Ave, Hamilton ",Keep Adding,https://artsforall.co/wp-content/uploads/2025/08/03467994-A76C-423A-9BFA-F2E51E12DA66-1152x1536.jpg,"43.248469423364355, -79.81077067570982"
+Ace Martin ,FALSE,Prince of Wales,BGC Hamilton Halton,"77 Melrose Ave N, Hamilton ",Fort of Colour,https://artsforall.co/wp-content/uploads/2025/08/5A3CB2ED-05D8-471E-A38D-7644CF324C341-1152x1536.jpg,"43.25249507156775, -79.83204157570965"
+Ace Martin ,FALSE,Queen Mary,BGC Hamilton Halton,"1292 Cannon St E, Hamilton",Tinfoil Restaurant,https://artsforall.co/wp-content/uploads/2025/08/20250711_140829-1024x768.jpg,"43.24585140491154, -79.8134616892027"
+Ace Martin ,FALSE,Viscount,BGC Hamilton Halton,"1525 Lucerne Ave, Hamilton ",Post Painting Circle ,https://artsforall.co/wp-content/uploads/2025/08/F44CC808-AFEF-492A-ADA9-B3C1AAF646E9-1152x1536.jpg,"43.2323204649863, -79.79678456803902"
+Kento C,TRUE,Ellis,BGC Hamilton Halton,"45 Ellis Ave, Hamilton ","Understanding, Energy, and the Senses Through Artistic Play",https://artsforall.co/wp-content/uploads/2025/08/IMG_1295-700x700.jpeg,"43.248469423364355, -79.81077067570982"
+Naseem Anvari,TRUE,Centre de Santé Barton,Centre de Santé,"1320 Barton St. E, Hamilton ",The Minute Details,https://artsforall.co/wp-content/uploads/2025/08/Centre-de-Sante-Barton-700x700.jpg,"43.24915767024441, -79.80652350846276"
+Naseem Anvari,TRUE,Centre de Santé Gage Park,Centre de Santé,"1000 Main St. E, Hamilton ",A Growing Patchwork,https://artsforall.co/wp-content/uploads/2025/08/Centre-de-Sante-Gage-700x700.jpg,"43.243015589277114, -79.82835173307485"
+Noor Butt,TRUE,Dominic Agostino Riverdale,Wesley Urban Ministries,"150 Violet Drive, Hamilton","Culture, Community, and Creativity - Building Friendships Through Art",https://artsforall.co/wp-content/uploads/2025/08/IMG_20250711_110437-700x700.jpg,"43.23248515932756, -79.7569344321609"
+Emma Daw,TRUE,Fieldcote,Today’s Family Early Learning and Child Care,"64 Sulphur Springs Rd, Ancaster ",Giving Our Energy to Others,https://artsforall.co/wp-content/uploads/2025/08/IMG_1443-700x700.jpg,"43.226224806555045, -79.98010107902256"
+Naseem Anvari,TRUE,Green Venture,BGC Hamilton Halton,"22 Veevers Drive, Hamilton",Bring on the Chaos!,https://artsforall.co/wp-content/uploads/2025/08/Green-Venture-1-700x700.jpg,"43.21092603476395, -79.7857860893623"
+Narita Sargees ,TRUE,N2N,YMCA,"28 Athens St, Hamilton ",Tape World Friends,https://artsforall.co/wp-content/uploads/2025/08/Screenshot_20250812-121023-700x665.png,"43.228539591400846, -79.88547356361249"
+Zorica Silverthorne ,TRUE,McQuesten Urban Farm,Niwasa Kendaaswin Teg,"785 Britannia Avenue, Hamilton ",Chalking the Ephemeral,https://artsforall.co/wp-content/uploads/2025/08/Copy-of-IMG_14751-700x700.jpg,"43.23986875375845, -79.78099722968128"
+  </script>
+
+  <script>
+    // ---- Helpers ----
+    const deg2rad = d => d * Math.PI / 180;
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371; // km
+      const dLat = deg2rad(lat2 - lat1);
+      const dLon = deg2rad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) ** 2;
+      return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+    const tidy = s => (s ?? "").toString().trim();
+    const asBool = s => tidy(s).toLowerCase() === "true";
+
+    // Parse CSV
+    const csv = document.getElementById("csvdata").textContent.trim();
+    const { data: rows } = Papa.parse(csv, { header: true, skipEmptyLines: true });
+
+    // Normalize and enrich rows
+    const enriched = rows.map(r => {
+      const site = tidy(r["Site"]);
+      const educator = tidy(r["Artist Educator"]);
+      const partner = tidy(r["Partner Org"]) || "Unknown";
+      const address = tidy(r["Address"]);
+      const title = tidy(r["Title"]);
+      const photo = tidy(r["Photo link"]);
+      const earlyOn = asBool(r["EarlyON"]);
+      // GPS like: "43.24..., -79.81..."
+      const gps = tidy(r["GPS"])
+        .split(",")
+        .map(v => parseFloat(v));
+      const [lat, lng] = gps.length >= 2 ? gps : [NaN, NaN];
+
+      return { site, educator, partner, address, title, photo, earlyOn, lat, lng };
+    });
+
+    // Build nodes
+    // id: 1..N, label: site, group: partner (default)
+    const baseNodes = enriched.map((r, i) => ({
+      id: i + 1,
+      label: r.site,
+      group: r.partner,
+      title:
+        `<b>${r.site}</b><br>` +
+        `${r.address ? r.address + "<br>" : ""}` +
+        `${r.title ? "Project: " + r.title + "<br>" : ""}` +
+        `Artist Educator: ${r.educator || "—"}<br>` +
+        `Partner: ${r.partner || "—"}<br>` +
+        `EarlyON: ${r.earlyOn ? "Yes" : "No"}<br>` +
+        (isFinite(r.lat) && isFinite(r.lng) ? `GPS: ${r.lat.toFixed(6)}, ${r.lng.toFixed(6)}` : "GPS: —"),
+      // keep lat/lng around for edge distance calculations & future features
+      lat: enriched[i].lat,
+      lng: enriched[i].lng
+    }));
+
+    // Build complete-graph edges weighted by distance
+    const baseEdges = [];
+    for (let i = 0; i < baseNodes.length; i++) {
+      for (let j = i + 1; j < baseNodes.length; j++) {
+        const a = baseNodes[i], b = baseNodes[j];
+        const d = (isFinite(a.lat) && isFinite(a.lng) && isFinite(b.lat) && isFinite(b.lng))
+          ? haversine(a.lat, a.lng, b.lat, b.lng)
+          : NaN;
+
+        // distance (km) as weight; use for edge "value" (thickness) and label/title
+        const rounded = isFinite(d) ? +d.toFixed(3) : null;
+
+        baseEdges.push({
+          id: `${a.id}-${b.id}`,
+          from: a.id,
+          to: b.id,
+          value: rounded ?? 1,                // used by vis-network to scale width
+          length: 30 + (isFinite(d) ? d * 8 : 80), // longer for farther pairs
+          title: isFinite(d) ? `${rounded} km` : "distance unavailable"
+        });
+      }
+    }
+
+    // vis-network setup
+    const container = document.getElementById("network");
+    const nodesDS = new vis.DataSet(baseNodes);
+    const edgesDS = new vis.DataSet(baseEdges);
+
+    const options = {
+      autoResize: true,
+      physics: {
+        solver: "forceAtlas2Based",
+        forceAtlas2Based: { gravitationalConstant: -30, springLength: 80, springConstant: 0.08 },
+        stabilization: { iterations: 150 }
+      },
+      interaction: { hover: true, tooltipDelay: 120 },
+      nodes: {
+        shape: "dot",
+        size: 12,
+        font: { size: 12, face: "Inter, system-ui, sans-serif" },
+        borderWidth: 1
+      },
+      edges: {
+        smooth: { type: "dynamic" },
+        scaling: { min: 1, max: 6 }, // width scaling driven by edge.value (our distance)
+        color: { opacity: 0.7 }
+      }
+    };
+
+    const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, options);
+
+    // --- UI: regroup & toggle edge labels ---
+    const groupBySel = document.getElementById("groupBy");
+    const edgeLabelsChk = document.getElementById("edgeLabels");
+
+    function computeGroup(node, key) {
+      const idx = node.id - 1;
+      const r = enriched[idx];
+      if (key === "Artist Educator") return r.educator || "Unknown";
+      if (key === "EarlyON") return r.earlyOn ? "EarlyON" : "Not EarlyON";
+      return r.partner || "Unknown"; // default: Partner Org
+    }
+
+    function applyGrouping(key) {
+      const updates = baseNodes.map(n => ({ id: n.id, group: computeGroup(n, key) }));
+      nodesDS.update(updates);
+    }
+
+    function applyEdgeLabels(show) {
+      const updates = baseEdges.map(e => ({ id: e.id, label: show && isFinite(parseFloat(e.value)) ? `${e.value} km` : undefined }));
+      // If hiding labels, we must set label to undefined to remove it
+      if (!show) updates.forEach(u => u.label = undefined);
+      edgesDS.update(updates);
+    }
+
+    groupBySel.addEventListener("change", e => applyGrouping(e.target.value));
+    edgeLabelsChk.addEventListener("change", e => applyEdgeLabels(e.target.checked));
+
+    // initial state
+    applyGrouping(groupBySel.value);
+    applyEdgeLabels(edgeLabelsChk.checked);
+  </script>
 </body>
 
 </html>
