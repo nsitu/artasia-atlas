@@ -1,3 +1,60 @@
+:root {
+  color-scheme: light dark;
+}
+
 body {
-  font-family: sans-serif;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  margin: 0;
+  background-color: light-dark(#ffffff, #1a1a1a);
+  color: light-dark(#000000, #ffffff);
+}
+
+/* Dark mode support for vis-network */
+@media (prefers-color-scheme: dark) {
+  #network {
+    background-color: #1a1a1a;
+  }
+
+  /* Ensure vis-network canvas text is visible in dark mode */
+  #network canvas {
+    filter: invert(0);
+  }
+}
+
+header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+header h1 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+label {
+  font-size: .9rem;
+}
+
+#network {
+  height: 80vh;
+}
+
+.hint {
+  font-size: .85rem;
+  opacity: .8;
+}
+
+.spacer {
+  flex: 1 1 auto;
 }
