@@ -278,9 +278,7 @@ async function initApp() {
 
         // Update title to show if it's a representative
         const titleElement = document.getElementById('details-title');
-        titleElement.textContent = isRepresentative
-            ? `📍 ${siteData.site} (Representative)`
-            : siteData.site;
+        titleElement.textContent = `📍 ${siteData.site}`
 
         // Show the details pane
         detailsPane.classList.remove('hidden');
