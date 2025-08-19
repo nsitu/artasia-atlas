@@ -278,15 +278,31 @@ async function initApp() {
 
         // Update title to show if it's a representative
         const titleElement = document.getElementById('details-title');
-        titleElement.textContent = `📍 ${siteData.site}`
+        titleElement.textContent = isRepresentative
+            ? `📍 ${siteData.site} (Representative)`
+            : siteData.site;
 
         // Show the details pane
         detailsPane.classList.remove('hidden');
+
+        // Smooth scroll to details pane
+        setTimeout(() => {
+            detailsPane.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 100); // Small delay to allow the pane to expand
     }
 
     function hideSiteDetails() {
         const detailsPane = document.getElementById('details-pane');
         detailsPane.classList.add('hidden');
+
+        // Smooth scroll back to top
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     }
 
     // Close button functionality
