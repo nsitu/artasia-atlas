@@ -58,3 +58,126 @@ label {
 .spacer {
   flex: 1 1 auto;
 }
+
+/* Details Pane Styles */
+.details-pane {
+  border-top: 1px solid light-dark(#ddd, #444);
+  background: light-dark(#f9f9f9, #2a2a2a);
+  transition: all 0.3s ease;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.details-pane:not(.hidden) {
+  max-height: 500px;
+  padding: 1.25rem;
+}
+
+.details-pane.hidden {
+  max-height: 0;
+  padding: 0 1.25rem;
+}
+
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid light-dark(#eee, #333);
+  padding-bottom: 0.75rem;
+}
+
+.details-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: light-dark(#333, #fff);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: light-dark(#666, #ccc);
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background: light-dark(#eee, #444);
+  color: light-dark(#333, #fff);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detail-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.detail-item label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: light-dark(#555, #bbb);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-item span {
+  font-size: 1rem;
+  color: light-dark(#333, #fff);
+  line-height: 1.4;
+}
+
+.detail-item a {
+  color: light-dark(#0066cc, #4da6ff);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  background: light-dark(#e6f3ff, #1a3366);
+  border-radius: 4px;
+  display: inline-block;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.detail-item a:hover {
+  background: light-dark(#cce6ff, #2a4477);
+  transform: translateY(-1px);
+}
+
+#detail-photo {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+
+#detail-photo-container {
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-pane:not(.hidden) {
+    padding: 1rem;
+  }
+}

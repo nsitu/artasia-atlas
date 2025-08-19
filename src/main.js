@@ -64,11 +64,13 @@ async function initApp() {
     };
 
     // Build nodes
-    // id: 1..N, label: site, group: partner (default), size based on participation
+    // id: 1..N, label: site, group: partner, shape: circularImage with photo
     const baseNodes = enriched.map((r, i) => ({
         id: i + 1,
         label: r.site,
         group: r.partner,
+        shape: 'circularImage',
+        image: r.photo || undefined, // Use photo URL or fallback to default shape
         size: mapParticipationToSize(r.participation),
         title:
             `<b>${r.site}</b><br>` +
@@ -161,7 +163,7 @@ async function initApp() {
     const repIds = new Set(repNodes.map(n => n.id));
     baseNodes.forEach(node => {
         if (repIds.has(node.id)) {
-            node.borderWidth = 3; // Thicker border for representatives
+            node.borderWidth = 10; // Thicker border for representatives
             node.title = `<b>📍 REPRESENTATIVE: ${node.label}</b><br>` + node.title;
         }
     });
@@ -185,14 +187,26 @@ async function initApp() {
         },
         interaction: { hover: true, tooltipDelay: 120 },
         nodes: {
-            shape: "dot",
+            shape: "circularImage", // Default shape for nodes with images
             size: 12,
             font: {
                 size: 12,
                 face: "Inter, system-ui, sans-serif",
                 color: textColor
             },
-            borderWidth: 1
+            borderWidth: 5,
+            // Fallback appearance for nodes without images
+            color: {
+                background: '#f0f0f0',
+                border: '#666666'
+            },
+            // Image handling
+            imagePadding: {
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0
+            }
         },
         edges: {
             smooth: { type: "dynamic" },
@@ -209,6 +223,76 @@ async function initApp() {
     };
 
     const network = new Network(container, { nodes: nodesDS, edges: edgesDS }, options);
+
+    // Handle node selection to show details
+    network.on("click", function (params) {
+        if (params.nodes.length > 0) {
+            const nodeId = params.nodes[0];
+            const nodeData = baseNodes.find(n => n.id === nodeId);
+            const enrichedData = enriched[nodeId - 1]; // nodeId is 1-based, array is 0-based
+            showSiteDetails(nodeData, enrichedData);
+        } else {
+            hideSiteDetails();
+        }
+    });
+
+    // Functions to show/hide site details
+    function showSiteDetails(nodeData, siteData) {
+        const detailsPane = document.getElementById('details-pane');
+        const isRepresentative = repIds.has(nodeData.id);
+
+        // Populate details
+        document.getElementById('detail-site').textContent = siteData.site || '—';
+        document.getElementById('detail-educator').textContent = siteData.educator || '—';
+        document.getElementById('detail-partner').textContent = siteData.partner || '—';
+        document.getElementById('detail-address').textContent = siteData.address || '—';
+        document.getElementById('detail-title-text').textContent = siteData.title || '—';
+        document.getElementById('detail-participation').textContent = siteData.participation || '—';
+        document.getElementById('detail-earlyon').textContent = siteData.earlyOn ? 'Yes' : 'No';
+
+        // GPS coordinates
+        const gpsText = (isFinite(siteData.lat) && isFinite(siteData.lng))
+            ? `${siteData.lat.toFixed(6)}, ${siteData.lng.toFixed(6)}`
+            : '—';
+        document.getElementById('detail-gps').textContent = gpsText;
+
+        // Documentation link
+        const linkElement = document.getElementById('detail-link');
+        if (siteData.link) {
+            linkElement.href = siteData.link;
+            linkElement.style.display = 'inline-block';
+        } else {
+            linkElement.style.display = 'none';
+        }
+
+        // Project photo
+        const photoElement = document.getElementById('detail-photo');
+        const photoContainer = document.getElementById('detail-photo-container');
+        if (siteData.photo) {
+            photoElement.src = siteData.photo;
+            photoElement.alt = `Photo of ${siteData.site}`;
+            photoContainer.style.display = 'flex';
+        } else {
+            photoContainer.style.display = 'none';
+        }
+
+        // Update title to show if it's a representative
+        const titleElement = document.getElementById('details-title');
+        titleElement.textContent = isRepresentative
+            ? `📍 ${siteData.site} (Representative)`
+            : siteData.site;
+
+        // Show the details pane
+        detailsPane.classList.remove('hidden');
+    }
+
+    function hideSiteDetails() {
+        const detailsPane = document.getElementById('details-pane');
+        detailsPane.classList.add('hidden');
+    }
+
+    // Close button functionality
+    document.getElementById('close-details').addEventListener('click', hideSiteDetails);
 
     // --- UI: regroup & toggle edge labels ---
     const groupBySel = document.getElementById("groupBy");
