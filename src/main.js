@@ -278,9 +278,7 @@ async function initApp() {
 
         // Update title to show if it's a representative
         const titleElement = document.getElementById('details-title');
-        titleElement.textContent = isRepresentative
-            ? `📍 ${siteData.site} (Representative)`
-            : siteData.site;
+        titleElement.textContent = `📍 ${siteData.site}`
 
         // Show the details pane
         detailsPane.classList.remove('hidden');
@@ -294,9 +292,8 @@ async function initApp() {
     // Close button functionality
     document.getElementById('close-details').addEventListener('click', hideSiteDetails);
 
-    // --- UI: regroup & toggle edge labels ---
+    // --- UI: regroup functionality ---
     const groupBySel = document.getElementById("groupBy");
-    const edgeLabelsChk = document.getElementById("edgeLabels");
 
     function computeGroup(node, key) {
         const idx = node.id - 1;
@@ -311,19 +308,10 @@ async function initApp() {
         nodesDS.update(updates);
     }
 
-    function applyEdgeLabels(show) {
-        const updates = baseEdges.map(e => ({ id: e.id, label: show && isFinite(parseFloat(e.value)) ? `${e.value} km` : undefined }));
-        // If hiding labels, we must set label to undefined to remove it
-        if (!show) updates.forEach(u => u.label = undefined);
-        edgesDS.update(updates);
-    }
-
     groupBySel.addEventListener("change", e => applyGrouping(e.target.value));
-    edgeLabelsChk.addEventListener("change", e => applyEdgeLabels(e.target.checked));
 
     // initial state
     applyGrouping(groupBySel.value);
-    applyEdgeLabels(edgeLabelsChk.checked);
 }
 
 // Start the application
