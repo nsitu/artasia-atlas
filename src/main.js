@@ -136,7 +136,6 @@ async function initApp() {
     const docLink = document.createElement('a');
     docLink.id = 'detail-link';
     docLink.href = '';
-    docLink.target = '_blank';
     docLink.rel = 'noopener';
     docLink.textContent = 'View Project Documentation';
     docDiv.appendChild(docLink);
@@ -210,7 +209,7 @@ async function initApp() {
             `Partner: ${r.partner || "—"}<br>` +
             `Participation: ${r.participation || "—"}<br>` +
             `EarlyON: ${r.earlyOn ? "Yes" : "No"}<br>` +
-            (r.link ? `<a href="${r.link}" target="_blank">View Project</a><br>` : "") +
+            (r.link ? `<a href="${r.link}">View Project</a><br>` : "") +
             (isFinite(r.lat) && isFinite(r.lng) ? `GPS: ${r.lat.toFixed(6)}, ${r.lng.toFixed(6)}` : "GPS: —"),
         // keep lat/lng around for edge distance calculations & future features
         lat: enriched[i].lat,
