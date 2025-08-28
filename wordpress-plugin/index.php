@@ -22,39 +22,21 @@ class ArtasiaAtlas
 
     private $plugin_dir;
     private $plugin_url;
-    private $shortcode_present = false;
 
     public function __construct()
     {
         $this->plugin_dir = plugin_dir_path(__FILE__);
         $this->plugin_url = plugin_dir_url(__FILE__);
 
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
+        add_action('init', array($this, 'register_assets'));
         add_shortcode('artasia_atlas', array($this, 'render_shortcode'));
-        add_action('wp', array($this, 'check_shortcode_presence'));
     }
 
     /**
-     * Check if shortcode is present on current page and set a flag
+     * Register CSS and JS assets
      */
-    public function check_shortcode_presence()
+    public function register_assets()
     {
-        global $post;
-        if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'artasia_atlas')) {
-            $this->shortcode_present = true;
-        }
-    }
-
-    /**
-     * Enqueue CSS and JS assets from the assets folder
-     */
-    public function enqueue_assets()
-    {
-        // Only enqueue if shortcode is present on the page
-        if (!$this->shortcode_present) {
-            return;
-        }
-
         $assets_dir = $this->plugin_dir . 'assets/';
 
         // Check if assets directory exists
@@ -89,9 +71,9 @@ class ArtasiaAtlas
             }
         }
 
-        // Enqueue CSS files
+        // Register CSS files
         foreach ($css_files as $index => $css_file) {
-            wp_enqueue_style(
+            wp_register_style(
                 'artasia-atlas-css-' . $index,
                 $css_file,
                 array(),
@@ -100,9 +82,9 @@ class ArtasiaAtlas
             );
         }
 
-        // Enqueue JS files
+        // Register JS files and localize with CSV URL
         foreach ($js_files as $index => $js_file) {
-            wp_enqueue_script(
+            wp_register_script(
                 'artasia-atlas-js-' . $index,
                 $js_file,
                 array(),
@@ -127,6 +109,9 @@ class ArtasiaAtlas
      */
     public function render_shortcode($atts = array(), $content = null)
     {
+        // Enqueue assets when shortcode is rendered
+        $this->enqueue_assets();
+
         $atts = shortcode_atts(array(
             'id' => 'artasia-atlas-app',
             'class' => ''
@@ -136,6 +121,33 @@ class ArtasiaAtlas
         $class = !empty($atts['class']) ? ' class="' . esc_attr($atts['class']) . '"' : '';
 
         return '<div id="' . $id . '"' . $class . '></div>';
+    }
+
+    /**
+     * Enqueue registered assets
+     */
+    private function enqueue_assets()
+    {
+        // Get all registered styles and scripts
+        global $wp_styles, $wp_scripts;
+
+        // Enqueue all registered CSS files for this plugin
+        if (isset($wp_styles->registered)) {
+            foreach ($wp_styles->registered as $handle => $style) {
+                if (strpos($handle, 'artasia-atlas-css-') === 0) {
+                    wp_enqueue_style($handle);
+                }
+            }
+        }
+
+        // Enqueue all registered JS files for this plugin
+        if (isset($wp_scripts->registered)) {
+            foreach ($wp_scripts->registered as $handle => $script) {
+                if (strpos($handle, 'artasia-atlas-js-') === 0) {
+                    wp_enqueue_script($handle);
+                }
+            }
+        }
     }
 }
 
