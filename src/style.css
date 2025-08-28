@@ -1,8 +1,4 @@
-:root {
-  color-scheme: light dark;
-}
-
-body {
+#artasia-atlas-app {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   margin: 0;
   background-color: light-dark(#ffffff, #1a1a1a);
@@ -11,17 +7,17 @@ body {
 
 /* Dark mode support for vis-network */
 @media (prefers-color-scheme: dark) {
-  #network {
+  #artasia-atlas-app #network {
     background-color: #1a1a1a;
   }
 
   /* Ensure vis-network canvas text is visible in dark mode */
-  #network canvas {
+  #artasia-atlas-app #network canvas {
     filter: invert(0);
   }
 }
 
-header {
+#artasia-atlas-app header {
   padding: 1rem 1.25rem;
   border-bottom: 1px solid #ddd;
   display: flex;
@@ -30,54 +26,54 @@ header {
   flex-wrap: wrap;
 }
 
-header h1 {
+#artasia-atlas-app header h1 {
   font-size: 1.1rem;
   margin: 0;
 }
 
-.controls {
+#artasia-atlas-app .controls {
   display: flex;
   gap: .75rem;
   align-items: center;
   flex-wrap: wrap;
 }
 
-label {
+#artasia-atlas-app label {
   font-size: .9rem;
 }
 
-#network {
+#artasia-atlas-app #network {
   height: 80vh;
 }
 
-.hint {
+#artasia-atlas-app .hint {
   font-size: .85rem;
   opacity: .8;
 }
 
-.spacer {
+#artasia-atlas-app .spacer {
   flex: 1 1 auto;
 }
 
 /* Details Pane Styles */
-.details-pane {
+#artasia-atlas-app .details-pane {
   border-top: 1px solid light-dark(#ddd, #444);
   background: light-dark(#f9f9f9, #2a2a2a);
   transition: all 0.3s ease;
   overflow: hidden;
 }
 
-.details-pane:not(.hidden) {
+#artasia-atlas-app .details-pane:not(.hidden) {
   height: auto;
   padding: 1.25rem;
 }
 
-.details-pane.hidden {
+#artasia-atlas-app .details-pane.hidden {
   height: 0;
   padding: 0 1.25rem;
 }
 
-.details-header {
+#artasia-atlas-app .details-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -86,13 +82,13 @@ label {
   padding-bottom: 0.75rem;
 }
 
-.details-header h2 {
+#artasia-atlas-app .details-header h2 {
   margin: 0;
   font-size: 1.2rem;
   color: light-dark(#333, #fff);
 }
 
-.close-btn {
+#artasia-atlas-app .close-btn {
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -107,28 +103,28 @@ label {
   justify-content: center;
 }
 
-.close-btn:hover {
+#artasia-atlas-app .close-btn:hover {
   background: light-dark(#eee, #444);
   color: light-dark(#333, #fff);
 }
 
-.details-grid {
+#artasia-atlas-app .details-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
 }
 
-.detail-item {
+#artasia-atlas-app .detail-item {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-.detail-item.full-width {
+#artasia-atlas-app .detail-item.full-width {
   grid-column: 1 / -1;
 }
 
-.detail-item label {
+#artasia-atlas-app .detail-item label {
   font-weight: 600;
   font-size: 0.9rem;
   color: light-dark(#555, #bbb);
@@ -136,13 +132,13 @@ label {
   letter-spacing: 0.5px;
 }
 
-.detail-item span {
+#artasia-atlas-app .detail-item span {
   font-size: 1rem;
   color: light-dark(#333, #fff);
   line-height: 1.4;
 }
 
-.detail-item a {
+#artasia-atlas-app .detail-item a {
   color: light-dark(#0066cc, #4da6ff);
   text-decoration: none;
   font-weight: 500;
@@ -154,28 +150,28 @@ label {
   width: fit-content;
 }
 
-.detail-item a:hover {
+#artasia-atlas-app .detail-item a:hover {
   background: light-dark(#cce6ff, #2a4477);
   transform: translateY(-1px);
 }
 
-#detail-photo {
+#artasia-atlas-app #detail-photo {
   max-width: 300px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   object-fit: cover;
 }
 
-#detail-photo-container {
+#artasia-atlas-app #detail-photo-container {
   margin-top: 1rem;
 }
 
 @media (max-width: 768px) {
-  .details-grid {
+  #artasia-atlas-app .details-grid {
     grid-template-columns: 1fr;
   }
 
-  .details-pane:not(.hidden) {
+  #artasia-atlas-app .details-pane:not(.hidden) {
     padding: 1rem;
   }
 }

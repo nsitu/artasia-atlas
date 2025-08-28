@@ -113,14 +113,12 @@ class ArtasiaAtlas
         $this->enqueue_assets();
 
         $atts = shortcode_atts(array(
-            'id' => 'artasia-atlas-app',
             'class' => ''
         ), $atts, 'artasia_atlas');
 
-        $id = esc_attr($atts['id']);
         $class = !empty($atts['class']) ? ' class="' . esc_attr($atts['class']) . '"' : '';
 
-        return '<div id="' . $id . '"' . $class . '></div>';
+        return '<div id="artasia-atlas-app"' . $class . '></div>';
     }
 
     /**
