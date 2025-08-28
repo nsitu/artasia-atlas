@@ -9,5 +9,5 @@ WordPress plugin (ZIP) - [https://nsitu.github.io/artasia-atlas/artasia-atlas.zi
 To add this to WordPress;
 1. Install the plugin above.
 2. Add a [shortcode](https://wordpress.com/support/wordpress-editor/blocks/shortcode-block/) to your page.
-3. Enter the following shortcode: `[artasia-atlas]`.
+3. Enter the following shortcode: `[artasia_atlas]`.
 4. Publish.
