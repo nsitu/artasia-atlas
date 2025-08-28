@@ -68,6 +68,25 @@ jobs:
         if: steps.pages_status.outputs.deploy == 'yes'
         run: npm run build
 
+      # ---------- 4) Prepare WordPress plugin ---------- 
+      - name: Copy index.php to dist
+        if: steps.pages_status.outputs.deploy == 'yes'
+        run: cp wordpress-plugin/index.php dist/
+
+      - name: Rename dist to artasia-atlas
+        if: steps.pages_status.outputs.deploy == 'yes'
+        run: mv dist artasia-atlas
+
+      - name: Create artasia-atlas.zip
+        if: steps.pages_status.outputs.deploy == 'yes'
+        run: |
+          zip -r artasia-atlas.zip artasia-atlas/
+          mv artasia-atlas.zip artasia-atlas/
+
+      - name: Remove index.php from artasia-atlas
+        if: steps.pages_status.outputs.deploy == 'yes'
+        run: rm artasia-atlas/index.php
+
       - name: Setup Pages
         if: steps.pages_status.outputs.deploy == 'yes'
         uses: actions/configure-pages@v5
@@ -76,7 +95,7 @@ jobs:
         if: steps.pages_status.outputs.deploy == 'yes'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./artasia-atlas
 
       - name: Deploy to GitHub Pages
         if: steps.pages_status.outputs.deploy == 'yes'

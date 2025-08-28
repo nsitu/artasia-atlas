@@ -30,6 +30,129 @@ async function loadCSVData() {
 async function initApp() {
     const rows = await loadCSVData();
 
+    // Create the UI structure dynamically
+    const app = document.getElementById('artasia-atlas-app');
+
+    // Create network container
+    const networkDiv = document.createElement('div');
+    networkDiv.id = 'network';
+    app.appendChild(networkDiv);
+
+    // Create header
+    const header = document.createElement('header');
+    const h1 = document.createElement('h1');
+    h1.textContent = 'Artasia 2025 Community Participation';
+    header.appendChild(h1);
+
+    const spacer = document.createElement('div');
+    spacer.className = 'spacer';
+    header.appendChild(spacer);
+
+    const controls = document.createElement('div');
+    controls.className = 'controls';
+    const label = document.createElement('label');
+    label.textContent = 'Group by: ';
+    const select = document.createElement('select');
+    select.id = 'groupBy';
+
+    const option1 = document.createElement('option');
+    option1.textContent = 'Partner Org';
+    select.appendChild(option1);
+
+    const option2 = document.createElement('option');
+    option2.textContent = 'Artist Educator';
+    select.appendChild(option2);
+
+    const option3 = document.createElement('option');
+    option3.textContent = 'EarlyON';
+    select.appendChild(option3);
+
+    label.appendChild(select);
+    controls.appendChild(label);
+    header.appendChild(controls);
+    app.appendChild(header);
+
+    // Create details pane
+    const detailsPane = document.createElement('div');
+    detailsPane.id = 'details-pane';
+    detailsPane.className = 'details-pane hidden';
+
+    const detailsHeader = document.createElement('div');
+    detailsHeader.className = 'details-header';
+    const h2 = document.createElement('h2');
+    h2.id = 'details-title';
+    h2.textContent = 'Site Details';
+    detailsHeader.appendChild(h2);
+
+    const closeBtn = document.createElement('button');
+    closeBtn.id = 'close-details';
+    closeBtn.className = 'close-btn';
+    closeBtn.innerHTML = '&times;';
+    detailsHeader.appendChild(closeBtn);
+    detailsPane.appendChild(detailsHeader);
+
+    const detailsContent = document.createElement('div');
+    detailsContent.className = 'details-content';
+    const detailsGrid = document.createElement('div');
+    detailsGrid.className = 'details-grid';
+
+    // Detail items
+    const detailItems = [
+        { label: 'Site:', id: 'detail-site' },
+        { label: 'Artist Educator:', id: 'detail-educator' },
+        { label: 'Partner Organization:', id: 'detail-partner' },
+        { label: 'Address:', id: 'detail-address' },
+        { label: 'Project Title:', id: 'detail-title-text' },
+        { label: 'Participation:', id: 'detail-participation' },
+        { label: 'EarlyON:', id: 'detail-earlyon' },
+        { label: 'GPS Coordinates:', id: 'detail-gps' },
+    ];
+
+    detailItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'detail-item';
+        const labelEl = document.createElement('label');
+        labelEl.textContent = item.label;
+        div.appendChild(labelEl);
+        const span = document.createElement('span');
+        span.id = item.id;
+        div.appendChild(span);
+        detailsGrid.appendChild(div);
+    });
+
+    // Documentation link
+    const docDiv = document.createElement('div');
+    docDiv.className = 'detail-item full-width';
+    const docLabel = document.createElement('label');
+    docLabel.textContent = 'Documentation:';
+    docDiv.appendChild(docLabel);
+    const docLink = document.createElement('a');
+    docLink.id = 'detail-link';
+    docLink.href = '';
+    docLink.target = '_blank';
+    docLink.rel = 'noopener';
+    docLink.textContent = 'View Project Documentation';
+    docDiv.appendChild(docLink);
+    detailsGrid.appendChild(docDiv);
+
+    // Project photo
+    const photoDiv = document.createElement('div');
+    photoDiv.className = 'detail-item full-width';
+    photoDiv.id = 'detail-photo-container';
+    const photoLabel = document.createElement('label');
+    photoLabel.textContent = 'Project Photo:';
+    photoDiv.appendChild(photoLabel);
+    const photoImg = document.createElement('img');
+    photoImg.id = 'detail-photo';
+    photoImg.src = '';
+    photoImg.alt = 'Project Photo';
+    photoDiv.appendChild(photoImg);
+    detailsGrid.appendChild(photoDiv);
+
+    detailsContent.appendChild(detailsGrid);
+    detailsPane.appendChild(detailsContent);
+    app.appendChild(detailsPane);
+
     // Normalize and enrich rows
     const enriched = rows.map(r => {
         const site = tidy(r["Site"]);
