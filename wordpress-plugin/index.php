@@ -91,6 +91,16 @@ class ArtasiaAtlas
                 filemtime($assets_dir . basename($js_file)),
                 true // Load in footer
             );
+
+            // Localize the script with data needed by JavaScript
+            wp_localize_script(
+                'artasia-atlas-js-' . $index,
+                'artasiaAtlasData',
+                array(
+                    'csvUrl' => $this->plugin_url . 'sites.csv',
+                    'pluginUrl' => $this->plugin_url
+                )
+            );
         }
     }
 

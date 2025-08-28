@@ -20,7 +20,8 @@ const asBool = s => tidy(s).toLowerCase() === "true";
 
 // Load and parse CSV from external file
 async function loadCSVData() {
-    const response = await fetch('./sites.csv');
+    const csvUrl = window.artasiaAtlasData?.csvUrl || './sites.csv';
+    const response = await fetch(csvUrl);
     const csvText = await response.text();
     const { data: rows } = Papa.parse(csvText, { header: true, skipEmptyLines: true });
     return rows;
