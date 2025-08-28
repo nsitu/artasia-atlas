@@ -22,6 +22,7 @@ class ArtasiaAtlas
 
     private $plugin_dir;
     private $plugin_url;
+    private $shortcode_present = false;
 
     public function __construct()
     {
@@ -30,6 +31,18 @@ class ArtasiaAtlas
 
         add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
         add_shortcode('artasia_atlas', array($this, 'render_shortcode'));
+        add_action('wp', array($this, 'check_shortcode_presence'));
+    }
+
+    /**
+     * Check if shortcode is present on current page and set a flag
+     */
+    public function check_shortcode_presence()
+    {
+        global $post;
+        if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'artasia_atlas')) {
+            $this->shortcode_present = true;
+        }
     }
 
     /**
@@ -37,6 +50,11 @@ class ArtasiaAtlas
      */
     public function enqueue_assets()
     {
+        // Only enqueue if shortcode is present on the page
+        if (!$this->shortcode_present) {
+            return;
+        }
+
         $assets_dir = $this->plugin_dir . 'assets/';
 
         // Check if assets directory exists

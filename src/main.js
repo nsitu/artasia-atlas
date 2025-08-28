@@ -34,6 +34,12 @@ async function initApp() {
     // Create the UI structure dynamically
     const app = document.getElementById('artasia-atlas-app');
 
+    // Check if the container element exists
+    if (!app) {
+        console.warn('Artasia Atlas: Container element with id "artasia-atlas-app" not found. Make sure to add the shortcode [artasia_atlas] to your page.');
+        return;
+    }
+
     // Create network container
     const networkDiv = document.createElement('div');
     networkDiv.id = 'network';
